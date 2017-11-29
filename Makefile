@@ -10,17 +10,20 @@ RESTART  = h5in
 
 UNAME = $(shell uname)
 ifeq ($(UNAME),Linux)
-H55 = /home/install/app/hdf5
+# H55 = /usr
 endif
 ifeq ($(UNAME),Darwin)
-H55 = /opt/local
+# H55 = /opt/local
+# H55 = /usr
 endif
+
+H55 = /usr
 
 CC = mpicc
 FLAGS = -O3 -Wall -g
 
 INC = -I$(H55)/include
-LIB = -L$(H55)/lib -lm -lhdf5
+LIB = -L$(H55)/lib -lhdf5 -lm
 
 OBJ = main.o readpar.o onestep.o exchange.o plm.o domain.o faces.o cooling.o nozzle.o gravity.o misc.o mpisetup.o gridsetup.o $(RIEMANN).o $(TIMESTEP).o $(INITIAL).o $(HYDRO).o $(GEOMETRY).o $(BOUNDARY).o $(OUTPUT).o snapshot.o report.o $(RESTART).o
 
@@ -54,7 +57,7 @@ $(RESTART).o : Restart/$(RESTART).c paul.h
 	$(CC) $(FLAGS) $(INC) -c Restart/$(RESTART).c
 
 jet: $(OBJ) paul.h
-	$(CC) $(FLAGS) $(LIB) -o jet $(OBJ)
+	$(CC) $(FLAGS) -o jet $(OBJ) $(LIB)
 
 clean:
 	rm -f *.o jet
